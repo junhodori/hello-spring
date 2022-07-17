@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 @RequestMapping("/design")
 @SessionAttributes("order")
 public class DesignTacoController {
-    final private final IngredientRepository ingredientRepo;
+    final private IngredientRepository ingredientRepo;
 
     final private TacoRepository tacoRepo;
 
