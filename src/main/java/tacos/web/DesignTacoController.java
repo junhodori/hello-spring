@@ -1,5 +1,6 @@
 package tacos.web;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,12 +16,14 @@ import tacos.Taco;
 import tacos.Order;
 import tacos.Ingredient;
 import tacos.Ingredient.Type;
+import tacos.User;
 import tacos.data.IngredientRepository;
 import javax.validation.Valid;
 import org.springframework.validation.Errors;
 import tacos.data.TacoRepository;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import tacos.data.UserRepository;
 
 @Slf4j
 @Controller
@@ -31,14 +34,17 @@ public class DesignTacoController {
 
     final private TacoRepository tacoRepo;
 
+    final private UserRepository userRepo;
+
     @Autowired
-    public DesignTacoController(IngredientRepository ingredientRepo, TacoRepository tacoRepo) {
+    public DesignTacoController(IngredientRepository ingredientRepo, TacoRepository tacoRepo, UserRepository userRepo) {
         this.ingredientRepo = ingredientRepo;
         this.tacoRepo = tacoRepo;
+        this.userRepo = userRepo;
     }
 
     @GetMapping
-    public String showDesignForm(Model model) {
+    public String showDesignForm(Model model, Principal principal) {
         List<Ingredient> ingredients = new ArrayList<>();
         ingredientRepo.findAll().forEach(ingredients::add);
 
@@ -48,7 +54,9 @@ public class DesignTacoController {
                     filterByType(ingredients, type));
         }
 
-        model.addAttribute("taco", new Taco());
+        String username = principal.getName();
+        User user = userRepo .findByUsername(username);
+        model.addAttribute("user", user);
 
         return "design";
     }
